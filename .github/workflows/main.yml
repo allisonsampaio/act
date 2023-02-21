@@ -1,0 +1,22 @@
+name: Save User Actions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  save_actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Save Actions
+        run: |
+          mkdir -p actions
+          cp -r $GITHUB_WORKSPACE/. actions/
+          git add actions
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git commit -m "Saving actions"
+          git push
