@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Save Actions
         run: |
+          mkdir -p actions
           cp -r $GITHUB_WORKSPACE/. actions
           git add actions
           git config --global user.email "actions@github.com"
