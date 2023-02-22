@@ -1,6 +1,10 @@
 name: Save User Actions
 
 on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
   push:
     branches:
       - main
@@ -19,8 +23,8 @@ jobs:
           mv $GITHUB_WORKSPACE/* $temp_dir/
           cp -r $temp_dir/. actions_folder
           cd actions_folder
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
           git add -A
           git commit -m "Saving actions"
           git push -u origin main
