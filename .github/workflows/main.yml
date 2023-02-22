@@ -19,11 +19,7 @@ jobs:
         env:
           PAT: ${{ secrets.PAT }}
         run: |
-          echo "User: $GITHUB_ACTOR" >> user_actions.log
-          echo "Event: $GITHUB_EVENT_NAME" >> user_actions.log
-          echo "Repository: $GITHUB_REPOSITORY" >> user_actions.log
-          echo "Action: $GITHUB_ACTION" >> user_actions.log
-          echo "Timestamp: $(date -u)" >> user_actions.log
+          echo '{"user": "'"$GITHUB_ACTOR"'", "event": "'"$GITHUB_EVENT_NAME"'", "repository": "'"$GITHUB_REPOSITORY"'", "action": "'"$GITHUB_ACTION"'", "timestamp": "'$(date -u)'" }' >> user_actions.json
 
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config user.name "${{ github.actor }}"
