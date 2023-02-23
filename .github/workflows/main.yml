@@ -13,14 +13,25 @@ jobs:
   save_actions:
     runs-on: ubuntu-latest
     steps:
+      - name: Append action to JSON file
+        uses: actions/checkout@v2
+        env:
+          PAT: ${{ secrets.PAT }}
+        run: |
+          echo "${{ toJson(github.event) }}" | \
+            jq '. + [{"action": ${{ toJson(github.event.action) }}, "date": ${{ toJson(github.event.created_at) }}, "repository": ${{ toJson(github.repository.full_name) }}}]' | \
+            sponge user_actions.json
+        if: ${{ always() }}
+
+  commit_changes:
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Save Actions
         env:
           PAT: ${{ secrets.PAT }}
         run: |
-          echo '{"user": "'"$GITHUB_ACTOR"'", "event": "'"$GITHUB_EVENT_NAME"'", "repository": "'"$GITHUB_REPOSITORY"'", "action": "'"$GITHUB_ACTION"'", "timestamp": "'$(date -u)'" }' >> user_actions.json
-
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config user.name "${{ github.actor }}"
           git add -A
