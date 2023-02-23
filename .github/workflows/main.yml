@@ -21,7 +21,7 @@ jobs:
         run: |
           action=$(echo "$GITHUB_EVENT_PATH" | xargs cat)
           json=$(jq --arg action "$action" '.actions |= . + [$action]' actions.json)
-          echo "$json" | sponge user_actions.json
+          echo "$json" | sponge ./user_actions.json
         shell: bash
         env:
           GITHUB_EVENT_PATH: ${{ github.event_path }}
