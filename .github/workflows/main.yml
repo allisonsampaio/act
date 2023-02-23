@@ -15,16 +15,16 @@ jobs:
     steps:
       - name: Install moreutils
         run: sudo apt-get install -y moreutils
-      - name: Append action to JSON file
-        env:
-          PAT: ${{ secrets.PAT }}
-        run: |
-          echo "${{ toJson(github.event) }}" | \
-            jq '. + [{"action": ${{ toJson(github.event.action) }}, "date": ${{ toJson(github.event.created_at) }}, "repository": ${{ toJson(github.repository.full_name) }}}]' | \
-            sponge user_actions.json
-        if: ${{ always() }}
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Add user action to JSON
+        run: |
+          action=$(echo "$GITHUB_EVENT_PATH" | xargs cat)
+          json=$(jq --arg action "$action" '.actions |= . + [$action]' actions.json)
+          echo "$json" | sponge user_actions.json
+        shell: bash
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
       - name: Save Actions
         env:
           PAT: ${{ secrets.PAT }}
